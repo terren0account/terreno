@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Venta de Terrenos - Cultura Chimú</title>
     <style>
+        /* Correcciones para evitar desbordamiento en móviles */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #121212;
             color: #FFFFFF;
+            overflow-x: hidden; /* Previene desplazamiento horizontal */
         }
+
+        img, iframe {
+            max-width: 100%; /* Asegura que imágenes y videos no excedan el ancho */
+            height: auto;
+        }
+
         header {
             background-color: #D4AF37;
             color: #121212;
