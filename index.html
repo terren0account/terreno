@@ -325,7 +325,18 @@
     offsetY = 0;  // Restablecer el desplazamiento Y
     updateZoom();
         }
-
+function centerMapOnMobile() {
+    if (window.innerWidth <= 768) {  // Detectar si es un dispositivo móvil
+        var mapContainer = document.getElementById("interactiveMapContainer");
+        var mapContainerWidth = mapContainer.clientWidth;
+        var mapContainerHeight = mapContainer.clientHeight;
+        // Calcular el desplazamiento para centrar
+        offsetX = (mapContainerWidth - interactiveMap.clientWidth * (zoomLevel / 100)) / 5;
+        offsetY = (mapContainerHeight - interactiveMap.clientHeight * (zoomLevel / 100)) / 2;
+        
+        interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
+    }
+}
 
 function updateZoom() {
            interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
@@ -354,12 +365,6 @@ function updateZoom() {
         }
     });
     // Mover el mapa con toque en dispositivos táctiles
-interactiveMap.addEventListener('touchstart', function(e) {
-    isDragging = true;
-    startX = e.touches[0].clientX - offsetX;
-    startY = e.touches[0].clientY - offsetY;
-    interactiveMap.style.cursor = 'grabbing';
-});
     // Mover el mapa con toque en dispositivos táctiles
     interactiveMap.addEventListener('touchstart', function(e) {
         isDragging = true;
