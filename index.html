@@ -326,6 +326,7 @@
     updateZoom();
         }
 
+
 function updateZoom() {
            interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
              document.getElementById("zoomLevel").innerText = `${zoomLevel}%`;
@@ -361,40 +362,6 @@ function updateZoom() {
         interactiveMap.style.cursor = 'grabbing';
         e.preventDefault();  // Prevenir el desplazamiento de la página
     });
-    <script>
-        // Tu código JavaScript aquí (por ejemplo, la función para centrar el mapa en móviles)
-        function centerMapOnMobile() {
-            if (window.innerWidth <= 768) {  // Si es un dispositivo móvil
-                const map = document.getElementById("interactive-map");
-                const container = map.parentElement;
-                
-                const containerRect = container.getBoundingClientRect();
-                const mapRect = map.getBoundingClientRect();
-
-                // Calculamos la posición para centrar el mapa
-                const initialX = (containerRect.width - mapRect.width) / 2;
-                const initialY = (containerRect.height - mapRect.height) / 2;
-
-                map.style.transform = `translate(${initialX}px, ${initialY}px)`;
-            }
-        }
-
-        // Llamar a la función cuando la ventana cambie de tamaño
-        window.addEventListener("resize", centerMapOnMobile);
-
-        // Llamar a la función inicialmente para asegurar el centro del mapa
-        window.addEventListener("load", centerMapOnMobile);
-    </script>
-
-// Llamar a la función para centrar el mapa cuando la ventana se carga
-window.addEventListener('load', function() {
-    setInitialStateMobile.call(this);
-});
-
-// Llamar a la función cuando se redimensione la ventana
-window.addEventListener('resize', function() {
-    setInitialStateMobile.call(this);
-});
 
 window.addEventListener('touchmove', function(e) {
     if (isDragging) {
