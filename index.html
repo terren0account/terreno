@@ -259,7 +259,7 @@
             <h2>Mapa Interactivo del Terreno</h2>
             <div id="interactive-map-container">
                 <img id="interactive-map" src="mapa.svg" alt="Mapa Interactivo" draggable="false">
-                
+
                 <div id="map-controls" class="map-panel">
                     <button id="zoomIn" class="map-btn">+</button>
                     <div id="zoomLevel">100%</div>
@@ -360,9 +360,18 @@ interactiveMap.addEventListener('touchstart', function(e) {
     startY = e.touches[0].clientY - offsetY;
     interactiveMap.style.cursor = 'grabbing';
 });
+    // Mover el mapa con toque en dispositivos táctiles
+    interactiveMap.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        startX = e.touches[0].clientX - offsetX;
+        startY = e.touches[0].clientY - offsetY;
+        interactiveMap.style.cursor = 'grabbing';
+        e.preventDefault();  // Prevenir el desplazamiento de la página
+    });
 
 window.addEventListener('touchmove', function(e) {
     if (isDragging) {
+        e.preventDefault();
         offsetX = e.touches[0].clientX - startX;
         offsetY = e.touches[0].clientY - startY;
         interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
