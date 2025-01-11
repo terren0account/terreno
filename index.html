@@ -215,7 +215,6 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
 </head>
-    <script src="mapa.js"></script>
 <body>
     <header>
         <h1>Venta de Terrenos</h1>
@@ -362,35 +361,7 @@ function updateZoom() {
         interactiveMap.style.cursor = 'grabbing';
         e.preventDefault();  // Prevenir el desplazamiento de la página
     });
-function setInitialStateMobile() {
-    // Verificar si la pantalla es móvil (ancho menor o igual a 768px)
-    if (window.innerWidth <= 768) {
-        this.updateBounds();
-        const container = this.container.getBoundingClientRect();
-        const map = this.map.getBoundingClientRect();
 
-        // Calcular las posiciones X y Y para centrar el mapa en la pantalla
-        this.state.initialX = (container.width - map.width) / 15;
-        this.state.initialY = (container.height - map.height) / 2;
-
-        // Asignar las nuevas posiciones al estado
-        this.state.x = this.state.initialX;
-        this.state.y = this.state.initialY;
-
-        // Actualizar la transformación para que el mapa quede centrado
-        this.updateTransform();
-    }
-}
-
-// Llamar a la función para centrar el mapa cuando la ventana se carga
-window.addEventListener('load', function() {
-    setInitialStateMobile.call(this);
-});
-
-// Llamar a la función cuando se redimensione la ventana
-window.addEventListener('resize', function() {
-    setInitialStateMobile.call(this);
-});
 
 window.addEventListener('touchmove', function(e) {
     if (isDragging) {
