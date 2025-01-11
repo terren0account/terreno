@@ -354,18 +354,15 @@ function updateZoom() {
         }
     });
     // Mover el mapa con toque en dispositivos táctiles
-    // Mover el mapa con toque en dispositivos táctiles
-    interactiveMap.addEventListener('touchstart', function(e) {
-        isDragging = true;
-        startX = e.touches[0].clientX - offsetX;
-        startY = e.touches[0].clientY - offsetY;
-        interactiveMap.style.cursor = 'grabbing';
-        e.preventDefault();  // Prevenir el desplazamiento de la página
-    });
+interactiveMap.addEventListener('touchstart', function(e) {
+    isDragging = true;
+    startX = e.touches[0].clientX - offsetX;
+    startY = e.touches[0].clientY - offsetY;
+    interactiveMap.style.cursor = 'grabbing';
+});
 
 window.addEventListener('touchmove', function(e) {
     if (isDragging) {
-        e.preventDefault();
         offsetX = e.touches[0].clientX - startX;
         offsetY = e.touches[0].clientY - startY;
         interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
