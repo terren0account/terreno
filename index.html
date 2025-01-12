@@ -3,406 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Venta de Terrenos - Cultura Chimú</title>
+    <title>Venta de Terrenos</title>
     <style>
-        /* Correcciones para evitar desbordamiento en móviles */
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #FFFFFF;
-            overflow-x: hidden; /* Previene desplazamiento horizontal */
-        }
-
-        img, iframe {
-            max-width: 100%; /* Asegura que imágenes y videos no excedan el ancho */
-            height: auto;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
         }
 
         header {
-            background-color: #D4AF37;
-            color: #121212;
-            padding: 10px 20px;
-            text-align: center;
+            background-color: rgb(14, 184, 235);
+            color: rgb(0, 0, 0);
+            padding: 15px 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            height: 70px;
         }
+
+        header .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        header .logo {
+            height: 100%;
+            max-height: 230px;
+            width: auto;
+            margin-right: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .menu a {
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #ffd500;
+            transition: background 0.3s ease;
+            margin-right: 15px
+        }
+
+        .menu a:hover {
+            background-color: #fff12c;
+        }
+
         .hero {
             background-image: url('tru.avif');
             background-size: cover;
             background-position: center;
-            height: 500px;
+            height: 670px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
             text-align: center;
+            padding: 20px;
             position: relative;
+            margin-top: 70px;
         }
 
-        .hero-text {
-            display: flex;
-            flex-direction: column; /* Hace que los párrafos se apilen verticalmente */
-            align-items: center; /* Centra el texto */
-            justify-content: center;
-            gap: 10px; /* Añade un espacio entre los párrafos */
-            position: absolute;
-            top: 50%; /* Posiciona el bloque de texto en el centro vertical */
-            transform: translateY(-50%); /* Asegura que esté centrado correctamente */
-        }
-
-        .hero-text p {
+        .hero h1 {
+            font-size: 2.5rem;
             margin: 0;
         }
 
-        /* Opciones para mover el texto */
-        .hero-text.left {
-            left: 20px; /* Desplaza el texto hacia la izquierda */
-            text-align: left;
+        .cta-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            animation: bounce 2s infinite;
         }
 
-        .hero-text.right {
-            right: 20px; /* Desplaza el texto hacia la derecha */
-            text-align: right;
+        .cta-button:hover {
+            background-color: #3b82f6;
+            transform: translateY(-3px);
         }
 
-        .hero-text.up {
-            top: 20px; /* Mueve el texto más arriba */
-            transform: translateY(0);
-        }
-
-        .hero-text.down {
-            top: 80%; /* Mueve el texto más abajo */
-            transform: translateY(-80%);
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
         }
 
         .container {
-            padding: 20px;
             max-width: 1200px;
-            margin: auto;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .section {
-            margin-bottom: 40px;
-        }
+
         .section h2 {
-            color: #D4AF37;
+            font-size: 2rem;
+            color: #1e3a8a;
             margin-bottom: 20px;
-            border-bottom: 2px solid #D4AF37;
-            display: inline-block;
-            padding-bottom: 5px;
+            text-align: center;
         }
+
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
         }
+
         .gallery img {
             width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        .mid-image {
-            margin: 40px 0;
-            text-align: center;
+
+        .gallery img:hover {
+            transform: scale(1.05);
         }
-        .mid-image img {
-            width: 100%;
-            height: auto;
-            border-radius: 0;
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
-        }
-        .video {
-            text-align: center;
-        }
+
         iframe {
             width: 100%;
             height: 315px;
             border: none;
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .map {
             height: 400px;
-            width: 100%;
-            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
-        }
-                /* Estilos ajustados para el mapa interactivo */
-                #interactive-map-container {
-            width: 100%;
-            height: 600px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            background: #1a1a1a;
-            box-shadow: 0 4px 6px rgba(212, 175, 55, 0.3);
-            margin: 20px 0;
-            border: 2px solid #D4AF37;
-        }
-/* Media query para pantallas móviles */
-        #interactive-map {
-            position: absolute;
-            top: 10%;
-            left: 2%;
-            transform-origin: center;
-            transition: transform 0.2s;
-            max-width: none;
-            cursor: grab;
-        }
-
-        .map-panel {
-            position: absolute;
-            right: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            background: rgba(40, 40, 40, 0.9);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 1000;
-            font-size: 14px;
-        }
-
-        #map-controls { top: 20px; }
-        #map-info { bottom: 20px; }
-
-        .map-btn {
-            padding: 10px 15px;
-            border: 2px solid #D4AF37;
-            border-radius: 0px;
-            background: transparent;
-            color: #D4AF37;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .map-btn:hover { 
-            background: #D4AF37;
-            color: #121212;
-        }
-
-        .map-btn:active { 
-            transform: scale(0.98); 
-        }
-
-        .map-btn:disabled { 
-            background: #555;
-            cursor: not-allowed;
-        }
-        .whatsapp-button {
-            background-color: #25D366;
-            color: white;
-            font-size: 1.2rem;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-align: center;
-            display: inline-block;
-            text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
-        }
-        .whatsapp-button:hover {
-            background-color: #128C7E;
-        }
-        .whatsapp-button:active {
-            background-color: #075E54;
-        }
-        .whatsapp-button.fixed {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
     </style>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
     <header>
-        <h1>Venta de Terrenos</h1>
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo de la Empresa" class="logo">
+            <h1>Venta de Lotes</h1>
+        </div>
+        <nav class="menu">
+            <a href="https://wa.me/1234567890" target="_blank">Contáctanos</a>
+        </nav>
     </header>
 
-    <div class="hero" data-aos="fade-up">
-        <div class="hero-text">
-            <p>Tu terreno, cerca de la historia y la tradición.</p>
-            <p>Oportunidades que no se repiten, adquiere tu lote hoy mismo</p>
-        </div>
+    <div class="hero">
+        <h1>Oportunidades que no se repiten</h1>
+        <p>Adquiere tu terreno ideal</p>
+        <a href="terreno.html" class="cta-button">Explorar Lotes</a>
     </div>
 
     <div class="container">
-        <div class="mid-image" data-aos="zoom-in" data-aos-duration="1000">
-            <img src="trujillo_largo.jpg" alt="Imagen de Trujillo">
-        </div>
-
-        <div class="section" data-aos="fade-right">
+        <div class="section" id="galeria">
             <h2>Galería</h2>
             <div class="gallery">
-                <img src="trujillo.png" alt="Imagen del terreno 1" data-aos="flip-left">
-                <img src="tru123.png" alt="Imagen del terreno 2" data-aos="flip-left" data-aos-delay="200">
-                <img src="trujillo.png" alt="Imagen del terreno 3" data-aos="flip-left" data-aos-delay="400">
-                <img src="tru123.png" alt="Imagen del terreno 4" data-aos="flip-left" data-aos-delay="600">
+                <img src="trujillo.png" alt="Terreno 1">
+                <img src="tru123.png" alt="Terreno 2">
+                <img src="trujillo.png" alt="Terreno 3">
+                <img src="tru123.png" alt="Terreno 4">
             </div>
         </div>
 
-        <div class="section" data-aos="fade-up">
+        <div class="section" id="video">
             <h2>Video Promocional</h2>
-            <div class="video">
-                <iframe src="https://www.youtube.com/watch?v=N6No3HZPhjo&ab_channel=LuisCenturi%C3%B3n" allowfullscreen></iframe>
-            </div>
+            <iframe src="https://www.youtube.com/embed/N6No3HZPhjo" allowfullscreen></iframe>
         </div>
 
-        <div class="section" data-aos="fade-up">
+        <div class="section" id="ubicacion">
             <h2>Ubicación</h2>
             <div id="map" class="map"></div>
         </div>
-
-        <!-- Nueva sección del mapa interactivo -->
-        <div class="section" data-aos="fade-up">
-            <h2>Mapa Interactivo del Terreno</h2>
-            <div id="interactive-map-container">
-                <img id="interactive-map" src="mapa.svg" alt="Mapa Interactivo" draggable="false">
-
-                <div id="map-controls" class="map-panel">
-                    <button id="zoomIn" class="map-btn">+</button>
-                    <div id="zoomLevel">100%</div>
-                    <button id="zoomOut" class="map-btn">-</button>
-                    <button id="reset" class="map-btn">Reset</button>
-                </div>
-
-                <div id="map-info" class="map-panel">
-                    <div>Rueda del ratón: zoom</div>
-                    <div>Click + arrastrar: mover</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section" data-aos="fade-up">
-            <h2>Contacto Rápido</h2>
-            <p>Si tienes alguna pregunta, no dudes en contactarnos a través de WhatsApp. ¡Estamos aquí para ayudarte!</p>
-            <a href="https://wa.me/+51987654321?text=¡Hola!%20Estoy%20interesado%20en%20los%20terrenos%20que%20ofrecen." target="_blank" class="whatsapp-button">
-                Contactar por WhatsApp
-            </a>
-        </div>
     </div>
 
-    <footer>
-        <p>© 2024 Venta de Terrenos Chimú. Todos los derechos reservados. <a href="#">Política de Privacidad</a></p>
-        <a href="https://wa.me/+51987654321?text=¡Hola!%20Estoy%20interesado%20en%20los%20terrenos%20que%20ofrecen." target="_blank" class="whatsapp-button fixed">
-            Contactar por WhatsApp
-        </a>
-    </footer>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
     <script>
-        var map = L.map('map').setView([-7.946638, -79.069137], 15); // Coordenadas de Chicama
+        var map = L.map('map').setView([-7.946638, -79.069137], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
         L.marker([-7.946638, -79.069137]).addTo(map)
-            .bindPopup('Chicama, 13700. Terreno disponible para la venta.')
+            .bindPopup('Terreno en Chicama. Ideal para tu proyecto.')
             .openPopup();
-
-        // Mapa interactivo
-        var zoomLevel = 100;
-        const interactiveMap = document.getElementById("interactive-map");
-        const zoomInButton = document.getElementById("zoomIn");
-        const zoomOutButton = document.getElementById("zoomOut");
-        const resetButton = document.getElementById("reset");
-
-        zoomInButton.onclick = function() {
-            zoomLevel += 10;
-            updateZoom();
-        }
-
-        zoomOutButton.onclick = function() {
-            zoomLevel -= 10;
-            updateZoom();
-        }
-
-        resetButton.onclick = function() {
-    zoomLevel = 100;
-    offsetX = 0;  // Restablecer el desplazamiento X
-    offsetY = 0;  // Restablecer el desplazamiento Y
-    updateZoom();
-        }
-
-function updateZoom() {
-           interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
-             document.getElementById("zoomLevel").innerText = `${zoomLevel}%`;
-        }
-
-    </script>
-<script>
-    var isDragging = false;
-    var startX, startY;
-    var offsetX = 0, offsetY = 0;
-
-    // Mover el mapa SVG con clic y arrastre
-    interactiveMap.addEventListener('mousedown', function(e) {
-        isDragging = true;
-        startX = e.clientX - offsetX;
-        startY = e.clientY - offsetY;
-        interactiveMap.style.cursor = 'grabbing';
-    });
-
-    window.addEventListener('mousemove', function(e) {
-        if (isDragging) {
-            offsetX = e.clientX - startX;
-            offsetY = e.clientY - startY;
-            interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
-        }
-    });
-    // Mover el mapa con toque en dispositivos táctiles
-    // Mover el mapa con toque en dispositivos táctiles
-    interactiveMap.addEventListener('touchstart', function(e) {
-        isDragging = true;
-        startX = e.touches[0].clientX - offsetX;
-        startY = e.touches[0].clientY - offsetY;
-        interactiveMap.style.cursor = 'grabbing';
-        e.preventDefault();  // Prevenir el desplazamiento de la página
-    });
-
-
-window.addEventListener('touchmove', function(e) {
-    if (isDragging) {
-        e.preventDefault();
-        offsetX = e.touches[0].clientX - startX;
-        offsetY = e.touches[0].clientY - startY;
-        interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
-    }
-});
-
-window.addEventListener('touchend', function() {
-    isDragging = false;
-    interactiveMap.style.cursor = 'grab';
-});
-
-    window.addEventListener('mouseup', function() {
-        isDragging = false;
-        interactiveMap.style.cursor = 'grab';
-    });
-
-    // Zoom con rueda del ratón
-    interactiveMap.addEventListener('wheel', function(e) {
-        e.preventDefault();
-        if (e.deltaY < 0) {
-            zoomLevel += 10; // Acercar
-        } else {
-            zoomLevel -= 10; // Alejar
-        }
-        zoomLevel = Math.max(50, Math.min(200, zoomLevel)); // Limitar el zoom entre 50% y 200%
-        updateZoom();
-    });
-
-    function updateZoom() {
-        interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
-        document.getElementById("zoomLevel").innerText = `${zoomLevel}%`;
-    }
-</script>
-
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init();
     </script>
 </body>
 </html>
