@@ -1,295 +1,154 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Interactivo SVG</title>
+    <title>Mapa Interactivo</title>
     <style>
-        /* Estilo global */
         body {
-            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
             color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden; /* Evitar desplazamiento no deseado */
+            height: 100vh;
         }
 
-        /* Contenedor principal */
         .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 80%;
-            flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas más pequeñas */
+            width: 90%;
+            max-width: 1200px;
+            background-color: #ffffff;
+            border: 1px solid #d1d1d1;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-gap: 0;
         }
 
-        /* Contenedor del mapa */
         #map-container {
-            width: 70%;
-            height: 600px;
-            overflow: hidden;
+            grid-column: 1 / span 1;
+            background-color: #e9ecef;
+            padding: 0;
             position: relative;
-            cursor: grab;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            background-color: #fff;
-            transition: all 0.3s ease-in-out;
-            touch-action: none; /* Permitir el desplazamiento táctil */
         }
 
-        /* Imagen del mapa */
-        img {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            transition: transform 0.3s ease;
+        #map {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
         }
 
-        /* Panel de control */
-        .control-panel {
-            width: 25%;
+        .panel {
+            grid-column: 2 / span 1;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: sticky;
-            top: 20px; /* Pegado al top */
-            height: 600px;
+            border-left: 1px solid #d1d1d1;
+            background-color: #fefefe;
         }
 
-        /* Título de panel */
-        .panel-title {
+        .panel h1 {
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 600;
             color: #333;
             margin-bottom: 20px;
-            text-transform: uppercase;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
         }
 
-        /* Botones del panel */
-        .btn {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(2px);
-        }
-
-        /* Botón de redirección */
-        .back-btn {
-            background-color: #3498db;
-            color: white;
-        }
-
-        /* Botón de reset */
-        .reset-btn {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        /* Barra deslizadora de zoom */
-        .zoom-slider-container {
-            width: 100%;
-            text-align: center;
+        .panel label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
         }
 
         .zoom-slider {
             width: 100%;
-            margin-top: 20px;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #007bff;
+            border: none;
+            border-radius: 0;
+            outline: none;
         }
 
-        .zoom-label {
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #007bff;
+            cursor: pointer;
+            border: 2px solid white;
+            border-radius: 0;
+        }
+
+        .zoom-value {
             font-size: 16px;
-            color: #333;
+            margin-top: 10px;
+            color: #007bff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
             font-weight: bold;
-        }
-
-        /* Texto informativo */
-        .info-text {
-            text-align: center;
-            font-size: 22px;
-            color: #333;
-            font-weight: 600;
-            margin-top: 30px;
-            margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
         }
 
-        /* Ajustes para pantallas móviles */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column; /* Cambiar a columna en dispositivos móviles */
-                width: 90%;
-            }
+        .btn:hover {
+            background: #0056b3;
+        }
 
-            .control-panel {
-                width: 100%;
-                height: auto;
-                position: static;
-                margin-top: 20px;
-            }
-
-            #map-container {
-                width: 100%;
-                height: 400px;
-            }
-
-            .info-text {
-                font-size: 18px;
-                margin-top: 20px;
-            }
+        .btn:active {
+            background: #004085;
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <!-- Panel de control (a la derecha) -->
-    <div class="control-panel">
-        <div class="panel-title">Controles</div>
-        
-        <!-- Botón de redirección -->
-        <a href="index.html">
-            <button class="btn back-btn">Volver a la página principal</button>
-        </a>
-
-        <!-- Botón de reset -->
-        <button class="btn reset-btn" id="reset-btn">Resetear</button>
-
-        <!-- Barra deslizadora de zoom -->
-        <div class="zoom-slider-container">
-            <label for="zoom-slider" class="zoom-label">Ajustar Zoom</label>
+    <div class="container">
+        <div id="map-container">
+            <img id="map" src="mapa.png" alt="Mapa Interactivo">
+        </div>
+        <div class="panel">
+            <h1>Controles de Zoom</h1>
+            <label for="zoom-slider">Ajustar Zoom</label>
             <input type="range" id="zoom-slider" class="zoom-slider" min="0.5" max="10" step="0.1" value="1">
+            <div class="zoom-value" id="zoom-value">1x</div>
+            <button class="btn">Restablecer</button>
         </div>
     </div>
 
-    <!-- Contenedor del mapa -->
-    <div id="map-container">
-        <!-- Usamos <img> para cargar el archivo SVG -->
-        <img id="map" src="mapa.svg" alt="Mapa SVG">
-    </div>
-</div>
+    <script>
+        const zoomSlider = document.getElementById('zoom-slider');
+        const zoomValue = document.getElementById('zoom-value');
+        const map = document.getElementById('map');
 
-<!-- Texto informativo -->
-<div class="info-text">
-    Elige tu lote y llama ya
-</div>
+        let scale = 1;
+        
+        zoomSlider.addEventListener('input', (e) => {
+            scale = parseFloat(e.target.value);
+            zoomValue.textContent = `${scale.toFixed(1)}x`;
+            map.style.transform = `scale(${scale})`;
+            map.style.transformOrigin = 'center';
+        });
 
-<script>
-    const mapContainer = document.getElementById('map-container');
-    const map = document.getElementById('map');
-    const resetBtn = document.getElementById('reset-btn');
-    const zoomSlider = document.getElementById('zoom-slider');
-
-    let scale = 1;
-    let startX, startY, isDragging = false;
-    let offsetX = 0, offsetY = 0; // Mantener el desplazamiento
-
-    // Función para manejar el movimiento táctil
-    const handleTouchStart = (e) => {
-        e.preventDefault();
-        isDragging = true;
-        startX = e.touches[0].pageX - offsetX;
-        startY = e.touches[0].pageY - offsetY;
-        mapContainer.style.cursor = 'grabbing';
-    };
-
-    const handleTouchMove = (e) => {
-        if (isDragging) {
-            const dx = e.touches[0].pageX - startX;
-            const dy = e.touches[0].pageY - startY;
-            offsetX = dx;
-            offsetY = dy;
-            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
-        }
-    };
-
-    const handleTouchEnd = () => {
-        isDragging = false;
-        mapContainer.style.cursor = 'grab';
-    };
-
-    // Habilitar el arrastre con el mouse
-    mapContainer.addEventListener('click', (e) => {
-        if (!isDragging) {
-            // Iniciar el movimiento
-            isDragging = true;
-            startX = e.pageX - offsetX;
-            startY = e.pageY - offsetY;
-            mapContainer.style.cursor = 'grabbing';
-        } else {
-            // Detener el movimiento
-            isDragging = false;
-            mapContainer.style.cursor = 'grab';
-        }
-    });
-
-    mapContainer.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            const dx = e.pageX - startX;
-            const dy = e.pageY - startY;
-            offsetX = dx;
-            offsetY = dy;
-            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
-        }
-    });
-
-    // Habilitar el zoom con la rueda del mouse
-    mapContainer.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        if (e.deltaY < 0) {
-            scale += 0.1;
-        } else {
-            scale = Math.max(0.5, scale - 0.1);
-        }
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-        zoomSlider.value = scale; // Sincronizar la barra de zoom
-    });
-
-    // Sincronizar el valor de la barra de zoom con la escala
-    zoomSlider.addEventListener('input', (e) => {
-        scale = parseFloat(e.target.value);
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-    });
-
-    // Resetear el mapa a su posición y escala original
-    resetBtn.addEventListener('click', () => {
-        scale = 1;
-        offsetX = 0;
-        offsetY = 0;
-        map.style.transform = `translate(0px, 0px) scale(1)`;
-        zoomSlider.value = 1; // Resetear la barra de zoom
-    });
-
-    // Agregar soporte táctil
-    mapContainer.addEventListener('touchstart', handleTouchStart);
-    mapContainer.addEventListener('touchmove', handleTouchMove);
-    mapContainer.addEventListener('touchend', handleTouchEnd);
-</script>
-
+        document.querySelector('.btn').addEventListener('click', () => {
+            zoomSlider.value = 1;
+            scale = 1;
+            zoomValue.textContent = '1x';
+            map.style.transform = 'scale(1)';
+        });
+    </script>
 </body>
 </html>
