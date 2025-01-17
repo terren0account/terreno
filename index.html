@@ -16,11 +16,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-        }
-
-        /* Evitar el desplazamiento del sitio cuando se está arrastrando el mapa */
-        body.no-scroll {
-            overflow: hidden;
+            overflow: auto;
         }
 
         /* Contenedor principal */
@@ -29,7 +25,7 @@
             justify-content: space-between;
             align-items: flex-start;
             width: 80%;
-            flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas más pequeñas */
+            flex-wrap: wrap;
         }
 
         /* Contenedor del mapa */
@@ -65,7 +61,7 @@
             flex-direction: column;
             align-items: flex-start;
             position: sticky;
-            top: 20px; /* Pegado al top */
+            top: 20px;
             height: 600px;
         }
 
@@ -144,8 +140,12 @@
 
         /* Ajustes para pantallas móviles */
         @media (max-width: 768px) {
+            body {
+                overflow: hidden; /* Deshabilita el desplazamiento en móviles */
+            }
+
             .container {
-                flex-direction: column; /* Cambiar a columna en dispositivos móviles */
+                flex-direction: column;
                 width: 90%;
             }
 
@@ -220,12 +220,10 @@
             startX = e.pageX - offsetX;
             startY = e.pageY - offsetY;
             mapContainer.style.cursor = 'grabbing';
-            document.body.classList.add('no-scroll'); // Deshabilitar el desplazamiento de la página
         } else {
             // Detener el movimiento
             isDragging = false;
             mapContainer.style.cursor = 'grab';
-            document.body.classList.remove('no-scroll'); // Habilitar el desplazamiento de la página
         }
     });
 
