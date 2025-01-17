@@ -18,6 +18,11 @@
             min-height: 100vh;
         }
 
+        /* Evitar el desplazamiento del sitio cuando se está arrastrando el mapa */
+        body.no-scroll {
+            overflow: hidden;
+        }
+
         /* Contenedor principal */
         .container {
             display: flex;
@@ -215,10 +220,12 @@
             startX = e.pageX - offsetX;
             startY = e.pageY - offsetY;
             mapContainer.style.cursor = 'grabbing';
+            document.body.classList.add('no-scroll'); // Deshabilitar el desplazamiento de la página
         } else {
             // Detener el movimiento
             isDragging = false;
             mapContainer.style.cursor = 'grab';
+            document.body.classList.remove('no-scroll'); // Habilitar el desplazamiento de la página
         }
     });
 
@@ -257,28 +264,6 @@
         offsetY = 0;
         map.style.transform = `translate(0px, 0px) scale(1)`;
         zoomSlider.value = 1; // Resetear la barra de zoom
-    });
-
-    // Implementar el deslizamiento táctil en móviles
-    let touchStartX, touchStartY;
-    mapContainer.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].pageX - offsetX;
-        touchStartY = e.touches[0].pageY - offsetY;
-        isDragging = true;
-    });
-
-    mapContainer.addEventListener('touchmove', (e) => {
-        if (isDragging) {
-            const dx = e.touches[0].pageX - touchStartX;
-            const dy = e.touches[0].pageY - touchStartY;
-            offsetX = dx;
-            offsetY = dy;
-            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
-        }
-    });
-
-    mapContainer.addEventListener('touchend', () => {
-        isDragging = false;
     });
 </script>
 
