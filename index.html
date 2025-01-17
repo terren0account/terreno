@@ -36,6 +36,7 @@
             position: relative;
             cursor: grab;
             border: 1px solid #ddd;
+            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             background-color: #fff;
             transition: all 0.3s ease-in-out;
@@ -55,14 +56,14 @@
             width: 25%;
             padding: 20px;
             background-color: #fff;
+            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             position: sticky;
             top: 20px; /* Pegado al top */
-            height: auto;
-            border: 1px solid #ddd; /* Borde recto */
+            height: 600px;
         }
 
         /* Título de panel */
@@ -72,22 +73,6 @@
             color: #333;
             margin-bottom: 20px;
             text-transform: uppercase;
-        }
-
-        /* Imagen del logo */
-        .panel-logo {
-            width: 100%;
-            height: auto;
-            margin-bottom: 20px;
-        }
-
-        /* Imagen en el panel */
-        .panel-image {
-            width: 100%;
-            height: auto;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* Botones del panel */
@@ -185,13 +170,8 @@
 <div class="container">
     <!-- Panel de control (a la derecha) -->
     <div class="control-panel">
-        <img src="logo.png" alt="Logo" class="panel-logo">
-
         <div class="panel-title">Controles</div>
         
-        <!-- Imagen en el panel -->
-        <img src="imagen.png" alt="Imagen decorativa" class="panel-image">
-
         <!-- Botón de redirección -->
         <a href="index.html">
             <button class="btn back-btn">Volver a la página principal</button>
@@ -254,11 +234,18 @@
     };
 
     // Habilitar el arrastre con el mouse
-    mapContainer.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        startX = e.pageX - offsetX;
-        startY = e.pageY - offsetY;
-        mapContainer.style.cursor = 'grabbing';
+    mapContainer.addEventListener('click', (e) => {
+        if (!isDragging) {
+            // Iniciar el movimiento
+            isDragging = true;
+            startX = e.pageX - offsetX;
+            startY = e.pageY - offsetY;
+            mapContainer.style.cursor = 'grabbing';
+        } else {
+            // Detener el movimiento
+            isDragging = false;
+            mapContainer.style.cursor = 'grab';
+        }
     });
 
     mapContainer.addEventListener('mousemove', (e) => {
@@ -269,16 +256,6 @@
             offsetY = dy;
             map.style.transform = translate(${dx}px, ${dy}px) scale(${scale});
         }
-    });
-
-    mapContainer.addEventListener('mouseup', () => {
-        isDragging = false;
-        mapContainer.style.cursor = 'grab';
-    });
-
-    mapContainer.addEventListener('mouseleave', () => {
-        isDragging = false;
-        mapContainer.style.cursor = 'grab';
     });
 
     // Habilitar el zoom con la rueda del mouse
