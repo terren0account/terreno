@@ -24,6 +24,7 @@
             justify-content: space-between;
             align-items: flex-start;
             width: 80%;
+            flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas más pequeñas */
         }
 
         /* Contenedor del mapa */
@@ -135,6 +136,31 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+
+        /* Ajustes para pantallas móviles */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Cambiar a columna en dispositivos móviles */
+                width: 90%;
+            }
+
+            .control-panel {
+                width: 100%;
+                height: auto;
+                position: static;
+                margin-top: 20px;
+            }
+
+            #map-container {
+                width: 100%;
+                height: 400px;
+            }
+
+            .info-text {
+                font-size: 18px;
+                margin-top: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -155,7 +181,7 @@
         <!-- Barra deslizadora de zoom -->
         <div class="zoom-slider-container">
             <label for="zoom-slider" class="zoom-label">Ajustar Zoom</label>
-            <input type="range" id="zoom-slider" class="zoom-slider" min="0.5" max="3" step="0.1" value="1">
+            <input type="range" id="zoom-slider" class="zoom-slider" min="0.5" max="10" step="0.1" value="1">
         </div>
     </div>
 
@@ -168,7 +194,7 @@
 
 <!-- Texto informativo -->
 <div class="info-text">
-    Elige tu lute y llama ya
+    Elige tu lote y llama ya
 </div>
 
 <script>
@@ -181,28 +207,28 @@
     let startX, startY, isDragging = false;
     let offsetX = 0, offsetY = 0; // Mantener el desplazamiento
 
-    // Activar y desactivar el arrastre al hacer clic
-    mapContainer.addEventListener('click', (e) => {
-        if (!isDragging) {
-            // Iniciar el movimiento
-            isDragging = true;
-            startX = e.pageX - offsetX;
-            startY = e.pageY - offsetY;
-            mapContainer.style.cursor = 'grabbing';
-        } else {
-            // Detener el movimiento
-            isDragging = false;
-            mapContainer.style.cursor = 'grab';
-        }
+    // Activar el arrastre al presionar el mouse
+    mapContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX - offsetX;
+        startY = e.pageY - offsetY;
+        mapContainer.style.cursor = 'grabbing';
     });
 
+    // Desactivar el arrastre al soltar el mouse
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        mapContainer.style.cursor = 'grab';
+    });
+
+    // Mover el mapa mientras se arrastra
     mapContainer.addEventListener('mousemove', (e) => {
         if (isDragging) {
             const dx = e.pageX - startX;
             const dy = e.pageY - startY;
             offsetX = dx;
             offsetY = dy;
-            map.style.transform = translate(${dx}px, ${dy}px) scale(${scale});
+            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
         }
     });
 
@@ -214,14 +240,14 @@
         } else {
             scale = Math.max(0.5, scale - 0.1);
         }
-        map.style.transform = translate(${offsetX}px, ${offsetY}px) scale(${scale});
+        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
         zoomSlider.value = scale; // Sincronizar la barra de zoom
     });
 
     // Sincronizar el valor de la barra de zoom con la escala
     zoomSlider.addEventListener('input', (e) => {
         scale = parseFloat(e.target.value);
-        map.style.transform = translate(${offsetX}px, ${offsetY}px) scale(${scale});
+        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
     });
 
     // Resetear el mapa a su posición y escala original
@@ -229,10 +255,11 @@
         scale = 1;
         offsetX = 0;
         offsetY = 0;
-        map.style.transform = translate(0px, 0px) scale(1);
+        map.style.transform = `translate(0px, 0px) scale(1)`;
         zoomSlider.value = 1; // Resetear la barra de zoom
     });
 </script>
 
 </body>
 </html>
+
