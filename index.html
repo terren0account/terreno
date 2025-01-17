@@ -3,293 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Interactivo SVG</title>
+    <title>Venta de Terrenos - Cultura Chimú</title>
     <style>
-        /* Estilo global */
+        /* Correcciones para evitar desbordamiento en móviles */
         body {
-            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #FFFFFF;
+            overflow-x: hidden; /* Previene desplazamiento horizontal */
+        }
+
+        img, iframe {
+            max-width: 100%; /* Asegura que imágenes y videos no excedan el ancho */
+            height: auto;
+        }
+
+        header {
+            background-color: #D4AF37;
+            color: #121212;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .hero {
+            background-image: url('tru.avif');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden; /* Evitar desplazamiento no deseado */
-        }
-
-        /* Contenedor principal */
-        .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 80%;
-            flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas más pequeñas */
-        }
-
-        /* Contenedor del mapa */
-        #map-container {
-            width: 70%;
-            height: 600px;
-            overflow: hidden;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            text-align: center;
             position: relative;
-            cursor: grab;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            background-color: #fff;
-            transition: all 0.3s ease-in-out;
-            touch-action: none; /* Permitir el desplazamiento táctil */
         }
 
-        /* Imagen del mapa */
-        img {
-            width: 100%;
-            height: 100%;
+        .hero-text {
+            display: flex;
+            flex-direction: column; /* Hace que los párrafos se apilen verticalmente */
+            align-items: center; /* Centra el texto */
+            justify-content: center;
+            gap: 10px; /* Añade un espacio entre los párrafos */
             position: absolute;
-            transition: transform 0.3s ease;
+            top: 50%; /* Posiciona el bloque de texto en el centro vertical */
+            transform: translateY(-50%); /* Asegura que esté centrado correctamente */
         }
 
-        /* Panel de control */
-        .control-panel {
-            width: 25%;
+        .hero-text p {
+            margin: 0;
+        }
+
+        /* Opciones para mover el texto */
+        .hero-text.left {
+            left: 20px; /* Desplaza el texto hacia la izquierda */
+            text-align: left;
+        }
+
+        .hero-text.right {
+            right: 20px; /* Desplaza el texto hacia la derecha */
+            text-align: right;
+        }
+
+        .hero-text.up {
+            top: 20px; /* Mueve el texto más arriba */
+            transform: translateY(0);
+        }
+
+        .hero-text.down {
+            top: 80%; /* Mueve el texto más abajo */
+            transform: translateY(-80%);
+        }
+
+        .container {
             padding: 20px;
-            background-color: #fff;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #D4AF37;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #D4AF37;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .gallery img {
+            width: 100%;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+        }
+        .mid-image {
+            margin: 40px 0;
+            text-align: center;
+        }
+        .mid-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 0;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+        }
+        .video {
+            text-align: center;
+        }
+        iframe {
+            width: 100%;
+            height: 315px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+        }
+        .map {
+            height: 400px;
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+        }
+                /* Estilos ajustados para el mapa interactivo */
+                #interactive-map-container {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #1a1a1a;
+            box-shadow: 0 4px 6px rgba(212, 175, 55, 0.3);
+            margin: 20px 0;
+            border: 2px solid #D4AF37;
+        }
+/* Media query para pantallas móviles */
+        #interactive-map {
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            left: 2%;
+            transform-origin: center;
+            transition: transform 0.2s;
+            max-width: none;
+            cursor: grab;
+        }
+
+        .map-panel {
+            position: absolute;
+            right: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(40, 40, 40, 0.9);
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            position: sticky;
-            top: 20px; /* Pegado al top */
-            height: 600px;
+            gap: 10px;
+            z-index: 1000;
+            font-size: 14px;
         }
 
-        /* Título de panel */
-        .panel-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
+        #map-controls { top: 20px; }
+        #map-info { bottom: 20px; }
 
-        /* Botones del panel */
-        .btn {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
+        .map-btn {
+            padding: 10px 15px;
+            border: 2px solid #D4AF37;
+            border-radius: 0px;
+            background: transparent;
+            color: #D4AF37;
             cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            transition: transform 0.2s ease, background-color 0.3s ease;
+            transition: 0.2s;
         }
 
-        .btn:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
+        .map-btn:hover { 
+            background: #D4AF37;
+            color: #121212;
         }
 
-        .btn:active {
-            transform: translateY(2px);
+        .map-btn:active { 
+            transform: scale(0.98); 
         }
 
-        /* Botón de redirección */
-        .back-btn {
-            background-color: #3498db;
+        .map-btn:disabled { 
+            background: #555;
+            cursor: not-allowed;
+        }
+        .whatsapp-button {
+            background-color: #25D366;
             color: white;
-        }
-
-        /* Botón de reset */
-        .reset-btn {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        /* Barra deslizadora de zoom */
-        .zoom-slider-container {
-            width: 100%;
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            border-radius: 50px;
             text-align: center;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
         }
-
-        .zoom-slider {
-            width: 100%;
-            margin-top: 20px;
+        .whatsapp-button:hover {
+            background-color: #128C7E;
         }
-
-        .zoom-label {
-            font-size: 16px;
-            color: #333;
-            font-weight: bold;
+        .whatsapp-button:active {
+            background-color: #075E54;
         }
-
-        /* Texto informativo */
-        .info-text {
-            text-align: center;
-            font-size: 22px;
-            color: #333;
-            font-weight: 600;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* Ajustes para pantallas móviles */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column; /* Cambiar a columna en dispositivos móviles */
-                width: 90%;
-            }
-
-            .control-panel {
-                width: 100%;
-                height: auto;
-                position: static;
-                margin-top: 20px;
-            }
-
-            #map-container {
-                width: 100%;
-                height: 400px;
-            }
-
-            .info-text {
-                font-size: 18px;
-                margin-top: 20px;
-            }
+        .whatsapp-button.fixed {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
         }
     </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" />
 </head>
 <body>
+    <header>
+        <h1>Venta de Terrenos</h1>
+    </header>
 
-<div class="container">
-    <!-- Panel de control (a la derecha) -->
-    <div class="control-panel">
-        <div class="panel-title">Controles</div>
-        
-        <!-- Botón de redirección -->
-        <a href="index.html">
-            <button class="btn back-btn">Volver a la página principal</button>
-        </a>
-
-        <!-- Botón de reset -->
-        <button class="btn reset-btn" id="reset-btn">Resetear</button>
-
-        <!-- Barra deslizadora de zoom -->
-        <div class="zoom-slider-container">
-            <label for="zoom-slider" class="zoom-label">Ajustar Zoom</label>
-            <input type="range" id="zoom-slider" class="zoom-slider" min="0.5" max="10" step="0.1" value="1">
+    <div class="hero" data-aos="fade-up">
+        <div class="hero-text">
+            <p>Tu terreno, cerca de la historia y la tradición.</p>
+            <p>Oportunidades que no se repiten, adquiere tu lote hoy mismo</p>
         </div>
     </div>
 
-    <!-- Contenedor del mapa -->
-    <div id="map-container">
-        <!-- Usamos <img> para cargar el archivo SVG -->
-        <img id="map" src="mapa.svg" alt="Mapa SVG">
+    <div class="container">
+        <div class="mid-image" data-aos="zoom-in" data-aos-duration="1000">
+            <img src="trujillo_largo.jpg" alt="Imagen de Trujillo">
+        </div>
+
+        <div class="section" data-aos="fade-right">
+            <h2>Galería</h2>
+            <div class="gallery">
+                <img src="trujillo.png" alt="Imagen del terreno 1" data-aos="flip-left">
+                <img src="tru123.png" alt="Imagen del terreno 2" data-aos="flip-left" data-aos-delay="200">
+                <img src="trujillo.png" alt="Imagen del terreno 3" data-aos="flip-left" data-aos-delay="400">
+                <img src="tru123.png" alt="Imagen del terreno 4" data-aos="flip-left" data-aos-delay="600">
+            </div>
+        </div>
+
+        <div class="section" data-aos="fade-up">
+            <h2>Video Promocional</h2>
+            <div class="video">
+                <iframe src="https://www.youtube.com/watch?v=N6No3HZPhjo&ab_channel=LuisCenturi%C3%B3n" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="section" data-aos="fade-up">
+            <h2>Ubicación</h2>
+            <div id="map" class="map"></div>
+        </div>
+
+        <!-- Nueva sección del mapa interactivo -->
+        <div class="section" data-aos="fade-up">
+            <h2>Mapa Interactivo del Terreno</h2>
+            <div id="interactive-map-container">
+                <img id="interactive-map" src="mapa.svg" alt="Mapa Interactivo" draggable="false">
+
+                <div id="map-controls" class="map-panel">
+                    <button id="zoomIn" class="map-btn">+</button>
+                    <div id="zoomLevel">100%</div>
+                    <button id="zoomOut" class="map-btn">-</button>
+                    <button id="reset" class="map-btn">Reset</button>
+                </div>
+
+                <div id="map-info" class="map-panel">
+                    <div>Rueda del ratón: zoom</div>
+                    <div>Click + arrastrar: mover</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" data-aos="fade-up">
+            <h2>Contacto Rápido</h2>
+            <p>Si tienes alguna pregunta, no dudes en contactarnos a través de WhatsApp. ¡Estamos aquí para ayudarte!</p>
+            <a href="https://wa.me/+51987654321?text=¡Hola!%20Estoy%20interesado%20en%20los%20terrenos%20que%20ofrecen." target="_blank" class="whatsapp-button">
+                Contactar por WhatsApp
+            </a>
+        </div>
     </div>
-</div>
 
-<!-- Texto informativo -->
-<div class="info-text">
-    Elige tu lote y llama ya
-</div>
+    <footer>
+        <p>© 2024 Venta de Terrenos Chimú. Todos los derechos reservados. <a href="#">Política de Privacidad</a></p>
+        <a href="https://wa.me/+51987654321?text=¡Hola!%20Estoy%20interesado%20en%20los%20terrenos%20que%20ofrecen." target="_blank" class="whatsapp-button fixed">
+            Contactar por WhatsApp
+        </a>
+    </footer>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        var map = L.map('map').setView([-7.946638, -79.069137], 15); // Coordenadas de Chicama
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        L.marker([-7.946638, -79.069137]).addTo(map)
+            .bindPopup('Chicama, 13700. Terreno disponible para la venta.')
+            .openPopup();
+
+        // Mapa interactivo
+        var zoomLevel = 100;
+        const interactiveMap = document.getElementById("interactive-map");
+        const zoomInButton = document.getElementById("zoomIn");
+        const zoomOutButton = document.getElementById("zoomOut");
+        const resetButton = document.getElementById("reset");
+
+        zoomInButton.onclick = function() {
+            zoomLevel += 10;
+            updateZoom();
+        }
+
+        zoomOutButton.onclick = function() {
+            zoomLevel -= 10;
+            updateZoom();
+        }
+
+        resetButton.onclick = function() {
+    zoomLevel = 100;
+    offsetX = 0;  // Restablecer el desplazamiento X
+    offsetY = 0;  // Restablecer el desplazamiento Y
+    updateZoom();
+        }
+
+function updateZoom() {
+           interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
+             document.getElementById("zoomLevel").innerText = `${zoomLevel}%`;
+        }
+
+    </script>
 <script>
-    const mapContainer = document.getElementById('map-container');
-    const map = document.getElementById('map');
-    const resetBtn = document.getElementById('reset-btn');
-    const zoomSlider = document.getElementById('zoom-slider');
+    var isDragging = false;
+    var startX, startY;
+    var offsetX = 0, offsetY = 0;
 
-    let scale = 1;
-    let startX, startY, isDragging = false;
-    let offsetX = 0, offsetY = 0; // Mantener el desplazamiento
-
-    // Función para manejar el movimiento táctil
-    const handleTouchStart = (e) => {
-        e.preventDefault();
+    // Mover el mapa SVG con clic y arrastre
+    interactiveMap.addEventListener('mousedown', function(e) {
         isDragging = true;
-        startX = e.touches[0].pageX - offsetX;
-        startY = e.touches[0].pageY - offsetY;
-        mapContainer.style.cursor = 'grabbing';
-    };
+        startX = e.clientX - offsetX;
+        startY = e.clientY - offsetY;
+        interactiveMap.style.cursor = 'grabbing';
+    });
 
-    const handleTouchMove = (e) => {
+    window.addEventListener('mousemove', function(e) {
         if (isDragging) {
-            const dx = e.touches[0].pageX - startX;
-            const dy = e.touches[0].pageY - startY;
-            offsetX = dx;
-            offsetY = dy;
-            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+            offsetX = e.clientX - startX;
+            offsetY = e.clientY - startY;
+            interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
         }
-    };
+    });
+    // Mover el mapa con toque en dispositivos táctiles
+    // Mover el mapa con toque en dispositivos táctiles
+    interactiveMap.addEventListener('touchstart', function(e) {
+        isDragging = true;
+        startX = e.touches[0].clientX - offsetX;
+        startY = e.touches[0].clientY - offsetY;
+        interactiveMap.style.cursor = 'grabbing';
+        e.preventDefault();  // Prevenir el desplazamiento de la página
+    });
 
-    const handleTouchEnd = () => {
+
+window.addEventListener('touchmove', function(e) {
+    if (isDragging) {
+        e.preventDefault();
+        offsetX = e.touches[0].clientX - startX;
+        offsetY = e.touches[0].clientY - startY;
+        interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
+    }
+});
+
+window.addEventListener('touchend', function() {
+    isDragging = false;
+    interactiveMap.style.cursor = 'grab';
+});
+
+    window.addEventListener('mouseup', function() {
         isDragging = false;
-        mapContainer.style.cursor = 'grab';
-    };
-
-    // Habilitar el arrastre con el mouse
-    mapContainer.addEventListener('click', (e) => {
-        if (!isDragging) {
-            // Iniciar el movimiento
-            isDragging = true;
-            startX = e.pageX - offsetX;
-            startY = e.pageY - offsetY;
-            mapContainer.style.cursor = 'grabbing';
-        } else {
-            // Detener el movimiento
-            isDragging = false;
-            mapContainer.style.cursor = 'grab';
-        }
+        interactiveMap.style.cursor = 'grab';
     });
 
-    mapContainer.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            const dx = e.pageX - startX;
-            const dy = e.pageY - startY;
-            offsetX = dx;
-            offsetY = dy;
-            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
-        }
-    });
-
-    // Habilitar el zoom con la rueda del mouse
-    mapContainer.addEventListener('wheel', (e) => {
+    // Zoom con rueda del ratón
+    interactiveMap.addEventListener('wheel', function(e) {
         e.preventDefault();
         if (e.deltaY < 0) {
-            scale += 0.1;
+            zoomLevel += 10; // Acercar
         } else {
-            scale = Math.max(0.5, scale - 0.1);
+            zoomLevel -= 10; // Alejar
         }
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-        zoomSlider.value = scale; // Sincronizar la barra de zoom
+        zoomLevel = Math.max(50, Math.min(200, zoomLevel)); // Limitar el zoom entre 50% y 200%
+        updateZoom();
     });
 
-    // Sincronizar el valor de la barra de zoom con la escala
-    zoomSlider.addEventListener('input', (e) => {
-        scale = parseFloat(e.target.value);
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-    });
-
-    // Resetear el mapa a su posición y escala original
-    resetBtn.addEventListener('click', () => {
-        scale = 1;
-        offsetX = 0;
-        offsetY = 0;
-        map.style.transform = `translate(0px, 0px) scale(1)`;
-        zoomSlider.value = 1; // Resetear la barra de zoom
-    });
-
-    // Agregar soporte táctil
-    mapContainer.addEventListener('touchstart', handleTouchStart);
-    mapContainer.addEventListener('touchmove', handleTouchMove);
-    mapContainer.addEventListener('touchend', handleTouchEnd);
+    function updateZoom() {
+        interactiveMap.style.transform = `scale(${zoomLevel / 100}) translate(${offsetX}px, ${offsetY}px)`;
+        document.getElementById("zoomLevel").innerText = `${zoomLevel}%`;
+    }
 </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
 </body>
 </html>
