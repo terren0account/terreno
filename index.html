@@ -16,7 +16,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: auto;
+            overflow: hidden; /* Evitar desplazamiento no deseado */
         }
 
         /* Contenedor principal */
@@ -25,7 +25,7 @@
             justify-content: space-between;
             align-items: flex-start;
             width: 80%;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas más pequeñas */
         }
 
         /* Contenedor del mapa */
@@ -36,10 +36,10 @@
             position: relative;
             cursor: grab;
             border: 1px solid #ddd;
-            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             background-color: #fff;
             transition: all 0.3s ease-in-out;
+            touch-action: none; /* Permitir el desplazamiento táctil */
         }
 
         /* Imagen del mapa */
@@ -55,14 +55,14 @@
             width: 25%;
             padding: 20px;
             background-color: #fff;
-            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             position: sticky;
-            top: 20px;
-            height: 600px;
+            top: 20px; /* Pegado al top */
+            height: auto;
+            border: 1px solid #ddd; /* Borde recto */
         }
 
         /* Título de panel */
@@ -72,6 +72,22 @@
             color: #333;
             margin-bottom: 20px;
             text-transform: uppercase;
+        }
+
+        /* Imagen del logo */
+        .panel-logo {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Imagen en el panel */
+        .panel-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* Botones del panel */
@@ -140,12 +156,8 @@
 
         /* Ajustes para pantallas móviles */
         @media (max-width: 768px) {
-            body {
-                overflow: hidden; /* Deshabilita el desplazamiento en móviles */
-            }
-
             .container {
-                flex-direction: column;
+                flex-direction: column; /* Cambiar a columna en dispositivos móviles */
                 width: 90%;
             }
 
@@ -173,8 +185,13 @@
 <div class="container">
     <!-- Panel de control (a la derecha) -->
     <div class="control-panel">
+        <img src="logo.png" alt="Logo" class="panel-logo">
+
         <div class="panel-title">Controles</div>
         
+        <!-- Imagen en el panel -->
+        <img src="imagen.png" alt="Imagen decorativa" class="panel-image">
+
         <!-- Botón de redirección -->
         <a href="index.html">
             <button class="btn back-btn">Volver a la página principal</button>
@@ -212,19 +229,36 @@
     let startX, startY, isDragging = false;
     let offsetX = 0, offsetY = 0; // Mantener el desplazamiento
 
-    // Activar y desactivar el arrastre al hacer clic
-    mapContainer.addEventListener('click', (e) => {
-        if (!isDragging) {
-            // Iniciar el movimiento
-            isDragging = true;
-            startX = e.pageX - offsetX;
-            startY = e.pageY - offsetY;
-            mapContainer.style.cursor = 'grabbing';
-        } else {
-            // Detener el movimiento
-            isDragging = false;
-            mapContainer.style.cursor = 'grab';
+    // Función para manejar el movimiento táctil
+    const handleTouchStart = (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.touches[0].pageX - offsetX;
+        startY = e.touches[0].pageY - offsetY;
+        mapContainer.style.cursor = 'grabbing';
+    };
+
+    const handleTouchMove = (e) => {
+        if (isDragging) {
+            const dx = e.touches[0].pageX - startX;
+            const dy = e.touches[0].pageY - startY;
+            offsetX = dx;
+            offsetY = dy;
+            map.style.transform = translate(${dx}px, ${dy}px) scale(${scale});
         }
+    };
+
+    const handleTouchEnd = () => {
+        isDragging = false;
+        mapContainer.style.cursor = 'grab';
+    };
+
+    // Habilitar el arrastre con el mouse
+    mapContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX - offsetX;
+        startY = e.pageY - offsetY;
+        mapContainer.style.cursor = 'grabbing';
     });
 
     mapContainer.addEventListener('mousemove', (e) => {
@@ -233,8 +267,18 @@
             const dy = e.pageY - startY;
             offsetX = dx;
             offsetY = dy;
-            map.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+            map.style.transform = translate(${dx}px, ${dy}px) scale(${scale});
         }
+    });
+
+    mapContainer.addEventListener('mouseup', () => {
+        isDragging = false;
+        mapContainer.style.cursor = 'grab';
+    });
+
+    mapContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+        mapContainer.style.cursor = 'grab';
     });
 
     // Habilitar el zoom con la rueda del mouse
@@ -245,14 +289,14 @@
         } else {
             scale = Math.max(0.5, scale - 0.1);
         }
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        map.style.transform = translate(${offsetX}px, ${offsetY}px) scale(${scale});
         zoomSlider.value = scale; // Sincronizar la barra de zoom
     });
 
     // Sincronizar el valor de la barra de zoom con la escala
     zoomSlider.addEventListener('input', (e) => {
         scale = parseFloat(e.target.value);
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        map.style.transform = translate(${offsetX}px, ${offsetY}px) scale(${scale});
     });
 
     // Resetear el mapa a su posición y escala original
@@ -260,9 +304,14 @@
         scale = 1;
         offsetX = 0;
         offsetY = 0;
-        map.style.transform = `translate(0px, 0px) scale(1)`;
+        map.style.transform = translate(0px, 0px) scale(1);
         zoomSlider.value = 1; // Resetear la barra de zoom
     });
+
+    // Agregar soporte táctil
+    mapContainer.addEventListener('touchstart', handleTouchStart);
+    mapContainer.addEventListener('touchmove', handleTouchMove);
+    mapContainer.addEventListener('touchend', handleTouchEnd);
 </script>
 
 </body>
