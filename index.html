@@ -13,7 +13,7 @@
             background-color: #f4f4f4;
             color: #333;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             overflow: hidden; /* Evita el scroll de la página */
@@ -36,7 +36,6 @@
             position: relative;
             cursor: grab;
             border: 1px solid #ddd;
-            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             background-color: #fff;
             touch-action: none; /* Desactiva el comportamiento predeterminado de gestos */
@@ -55,7 +54,6 @@
             width: 25%;
             padding: 20px;
             background-color: #fff;
-            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
@@ -63,6 +61,7 @@
             position: sticky;
             top: 20px; /* Pegado al top */
             height: 600px;
+            border: 1px solid #ddd;
         }
 
         /* Título de panel */
@@ -84,7 +83,6 @@
             text-transform: uppercase;
             cursor: pointer;
             border: none;
-            border-radius: 5px;
             transition: transform 0.2s ease, background-color 0.3s ease;
         }
 
@@ -142,24 +140,26 @@
         @media (max-width: 768px) {
             .container {
                 flex-direction: column; /* Cambiar a columna en dispositivos móviles */
-                width: 90%;
+                width: 100%;
+                align-items: center;
             }
 
             .control-panel {
-                width: 100%;
+                width: 90%;
                 height: auto;
                 position: static;
-                margin-top: 20px;
+                margin-bottom: 20px;
             }
 
             #map-container {
-                width: 100%;
+                width: 90%;
                 height: 400px;
+                margin-bottom: 20px;
             }
 
             .info-text {
                 font-size: 18px;
-                margin-top: 20px;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -167,7 +167,7 @@
 <body>
 
 <div class="container">
-    <!-- Panel de control (a la derecha) -->
+    <!-- Panel de control (arriba en móvil) -->
     <div class="control-panel">
         <div class="panel-title">Controles</div>
         
@@ -193,11 +193,13 @@
     </div>
 </div>
 
-<!-- Texto informativo -->
+<!-- Texto informativo (abajo en móvil) -->
 <div class="info-text">
     Elige tu lote y llama ya
 </div>
+
 <script>
+    // El mismo código JavaScript original.
     const mapContainer = document.getElementById('map-container');
     const map = document.getElementById('map');
     const resetBtn = document.getElementById('reset-btn');
@@ -208,12 +210,13 @@
     let offsetX = 0, offsetY = 0; // Desplazamiento acumulado
     let isDragging = false; // Controlar si se está arrastrando
     let initialDistance = null; // Para gestos táctiles de zoom
+    let isMouseDragging = false; // Control para arrastre con mouse en PC
 
     // === MOVIMIENTO Y ZOOM EN PC ===
 
     // Detectar inicio del arrastre con mouse
     mapContainer.addEventListener('mousedown', (e) => {
-        isDragging = true; // Habilitar el arrastre
+        isMouseDragging = true;
         startX = e.pageX - offsetX; // Guardar la posición inicial X
         startY = e.pageY - offsetY; // Guardar la posición inicial Y
         mapContainer.style.cursor = "grabbing"; // Cambiar cursor al arrastrar
@@ -221,7 +224,7 @@
 
     // Detectar movimiento del mouse
     mapContainer.addEventListener('mousemove', (e) => {
-        if (isDragging) {
+        if (isMouseDragging) {
             offsetX = e.pageX - startX; // Calcular desplazamiento en X
             offsetY = e.pageY - startY; // Calcular desplazamiento en Y
             map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar transformaciones
@@ -230,13 +233,13 @@
 
     // Detectar final del arrastre con mouse
     mapContainer.addEventListener('mouseup', () => {
-        isDragging = false; // Deshabilitar el arrastre
+        isMouseDragging = false; // Detener el arrastre
         mapContainer.style.cursor = "grab"; // Cambiar cursor a "grab"
     });
 
     // Detectar salida del mouse del contenedor (para soltar si ocurre fuera del área)
     mapContainer.addEventListener('mouseleave', () => {
-        isDragging = false; // Deshabilitar el arrastre
+        isMouseDragging = false; // Detener el arrastre
         mapContainer.style.cursor = "grab"; // Cambiar cursor a "grab"
     });
 
@@ -256,24 +259,68 @@
         zoomSlider.value = scale; // Sincronizar el slider con el zoom
     });
 
-    // === ZOOM DESDE LA BARRA DESLIZADORA ===
+    // === MOVIMIENTO Y ZOOM EN CELULAR ===
 
-    zoomSlider.addEventListener('input', (e) => {
-        scale = parseFloat(e.target.value); // Obtener el valor del slider
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar el zoom
+    // Detectar inicio del movimiento táctil
+    mapContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - offsetX;
+            startY = e.touches[0].clientY - offsetY;
+        } else if (e.touches.length === 2) {
+            initialDistance = getDistance(e.touches); // Guardar la distancia inicial entre los dos dedos
+        }
     });
 
-    // === RESET DEL MAPA ===
+    // Detectar movimiento táctil
+    mapContainer.addEventListener('touchmove', (e) => {
+        e.preventDefault(); // Prevenir el comportamiento predeterminado
+        if (isDragging && e.touches.length === 1) {
+            offsetX = e.touches[0].clientX - startX;
+            offsetY = e.touches[0].clientY - startY;
+            map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        } else if (e.touches.length === 2) {
+            const distance = getDistance(e.touches); // Obtener la nueva distancia entre los dedos
+            if (initialDistance) {
+                scale *= distance / initialDistance; // Ajustar el nivel de zoom basado en el cambio de distancia
+                scale = Math.min(Math.max(scale, 0.5), 10); // Limitar el nivel de zoom entre 0.5 y 10
+                initialDistance = distance; // Actualizar la distancia inicial
+                map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+                zoomSlider.value = scale; // Sincronizar el slider con el zoom
+            }
+        }
+    });
 
+    // Detectar final del movimiento táctil
+    mapContainer.addEventListener('touchend', () => {
+        isDragging = false;
+        initialDistance = null; // Resetear la distancia inicial
+    });
+
+    // Calcular la distancia entre dos puntos táctiles
+    function getDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // === CONTROLES ADICIONALES ===
+
+    // Restablecer el mapa
     resetBtn.addEventListener('click', () => {
-        scale = 1; // Restablecer el zoom
-        offsetX = 0; // Restablecer el desplazamiento en X
-        offsetY = 0; // Restablecer el desplazamiento en Y
-        map.style.transform = `translate(0px, 0px) scale(1)`; // Restablecer transformaciones
-        zoomSlider.value = 1; // Sincronizar el slider
+        scale = 1; // Reiniciar nivel de zoom
+        offsetX = 0; // Reiniciar desplazamiento en X
+        offsetY = 0; // Reiniciar desplazamiento en Y
+        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        zoomSlider.value = scale; // Sincronizar el slider con el zoom
+    });
+
+    // Controlar el zoom mediante el slider
+    zoomSlider.addEventListener('input', (e) => {
+        scale = parseFloat(e.target.value);
+        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
     });
 </script>
-
 
 </body>
 </html>
