@@ -208,13 +208,12 @@
     let offsetX = 0, offsetY = 0; // Desplazamiento acumulado
     let isDragging = false; // Controlar si se está arrastrando
     let initialDistance = null; // Para gestos táctiles de zoom
-    let isMouseDragging = false; // Control para arrastre con mouse en PC
 
     // === MOVIMIENTO Y ZOOM EN PC ===
 
     // Detectar inicio del arrastre con mouse
     mapContainer.addEventListener('mousedown', (e) => {
-        isMouseDragging = true;
+        isDragging = true; // Habilitar el arrastre
         startX = e.pageX - offsetX; // Guardar la posición inicial X
         startY = e.pageY - offsetY; // Guardar la posición inicial Y
         mapContainer.style.cursor = "grabbing"; // Cambiar cursor al arrastrar
@@ -222,7 +221,7 @@
 
     // Detectar movimiento del mouse
     mapContainer.addEventListener('mousemove', (e) => {
-        if (isMouseDragging) {
+        if (isDragging) {
             offsetX = e.pageX - startX; // Calcular desplazamiento en X
             offsetY = e.pageY - startY; // Calcular desplazamiento en Y
             map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar transformaciones
@@ -231,13 +230,13 @@
 
     // Detectar final del arrastre con mouse
     mapContainer.addEventListener('mouseup', () => {
-        isMouseDragging = false; // Detener el arrastre
+        isDragging = false; // Deshabilitar el arrastre
         mapContainer.style.cursor = "grab"; // Cambiar cursor a "grab"
     });
 
     // Detectar salida del mouse del contenedor (para soltar si ocurre fuera del área)
     mapContainer.addEventListener('mouseleave', () => {
-        isMouseDragging = false; // Detener el arrastre
+        isDragging = false; // Deshabilitar el arrastre
         mapContainer.style.cursor = "grab"; // Cambiar cursor a "grab"
     });
 
@@ -255,51 +254,6 @@
 
         map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar el nuevo zoom
         zoomSlider.value = scale; // Sincronizar el slider con el zoom
-    });
-
-    // === MOVIMIENTO Y ZOOM EN CELULAR ===
-
-    // Detectar inicio del movimiento táctil
-    mapContainer.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-            isDragging = true;
-            startX = e.touches[0].pageX - offsetX;
-            startY = e.touches[0].pageY - offsetY;
-        } else if (e.touches.length === 2) {
-            isDragging = false;
-            initialDistance = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
-            );
-        }
-    });
-
-    // Detectar movimiento táctil
-    mapContainer.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (e.touches.length === 1 && isDragging) {
-            offsetX = e.touches[0].pageX - startX;
-            offsetY = e.touches[0].pageY - startY;
-            map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-        } else if (e.touches.length === 2) {
-            const currentDistance = Math.hypot(
-                e.touches[0].pageX - e.touches[1].pageX,
-                e.touches[0].pageY - e.touches[1].pageY
-            );
-            if (initialDistance) {
-                const zoomFactor = currentDistance / initialDistance;
-                scale = Math.min(10, Math.max(0.5, scale * zoomFactor));
-                map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-                zoomSlider.value = scale;
-                initialDistance = currentDistance;
-            }
-        }
-    });
-
-    // Finalizar el movimiento táctil
-    mapContainer.addEventListener('touchend', () => {
-        isDragging = false;
-        initialDistance = null;
     });
 
     // === ZOOM DESDE LA BARRA DESLIZADORA ===
