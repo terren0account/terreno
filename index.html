@@ -205,60 +205,50 @@
     const zoomSlider = document.getElementById('zoom-slider');
 
     let scale = 1; // Nivel de zoom
-    let startX = 0, startY = 0; // Coordenadas iniciales al empezar el movimiento
     let offsetX = 0, offsetY = 0; // Desplazamiento acumulado
-    let isDragging = false; // Controlar si se está arrastrando
-    let initialDistance = null; // Para gestos táctiles de zoom
-    let isMouseDragging = false; // Control para arrastre con mouse en PC
 
-    // === MOVIMIENTO Y ZOOM EN PC ===
+    // === MOVIMIENTO CON CLICK SIMPLE ===
 
-    // Detectar inicio del arrastre con mouse
-    mapContainer.addEventListener('mousedown', (e) => {
-        isMouseDragging = true;
-        startX = e.pageX - offsetX; // Guardar la posición inicial X
-        startY = e.pageY - offsetY; // Guardar la posición inicial Y
-        mapContainer.style.cursor = "grabbing"; // Cambiar cursor al arrastrar
+    // Detectar clic en el contenedor del mapa
+    mapContainer.addEventListener('click', (e) => {
+        const rect = mapContainer.getBoundingClientRect(); // Obtener el tamaño y posición del contenedor
+        const clickX = e.clientX - rect.left; // Coordenada X del clic relativa al contenedor
+        const clickY = e.clientY - rect.top; // Coordenada Y del clic relativa al contenedor
+
+        // Calcular desplazamiento en función del clic
+        const containerWidth = rect.width;
+        const containerHeight = rect.height;
+
+        // Ajustar el desplazamiento con un porcentaje relativo al clic
+        offsetX += (containerWidth / 2 - clickX) * 0.2; // Ajustar la sensibilidad del movimiento
+        offsetY += (containerHeight / 2 - clickY) * 0.2;
+
+        // Aplicar transformación al mapa
+        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
     });
 
-    // Detectar movimiento del mouse
-    mapContainer.addEventListener('mousemove', (e) => {
-        if (isMouseDragging) {
-            offsetX = e.pageX - startX; // Calcular desplazamiento en X
-            offsetY = e.pageY - startY; // Calcular desplazamiento en Y
-            map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar transformaciones
-        }
+    // === ZOOM DESDE LA BARRA DESLIZADORA ===
+
+    zoomSlider.addEventListener('input', (e) => {
+        scale = parseFloat(e.target.value); // Obtener el valor del slider
+        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar el zoom
     });
 
-    // Detectar final del arrastre con mouse
-    mapContainer.addEventListener('mouseup', () => {
-        isMouseDragging = false; // Detener el arrastre
-        mapContainer.style.cursor = "grab"; // Cambiar cursor a "grab"
-    });
+    // === RESET DEL MAPA ===
 
-    // Detectar salida del mouse del contenedor (para soltar si ocurre fuera del área)
-    mapContainer.addEventListener('mouseleave', () => {
-        isMouseDragging = false; // Detener el arrastre
-        mapContainer.style.cursor = "grab"; // Cambiar cursor a "grab"
-    });
-
-    // Detectar zoom con la rueda del mouse
-    mapContainer.addEventListener('wheel', (e) => {
-        e.preventDefault(); // Prevenir el comportamiento predeterminado
-        const zoomStep = 0.1; // Incremento/decremento del zoom
-
-        // Ajustar el nivel de zoom
-        if (e.deltaY < 0) {
-            scale = Math.min(scale + zoomStep, 10); // Zoom in
-        } else {
-            scale = Math.max(scale - zoomStep, 0.5); // Zoom out
-        }
-
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar el nuevo zoom
-        zoomSlider.value = scale; // Sincronizar el slider con el zoom
+    resetBtn.addEventListener('click', () => {
+        scale = 1; // Restablecer el zoom
+        offsetX = 0; // Restablecer el desplazamiento en X
+        offsetY = 0; // Restablecer el desplazamiento en Y
+        map.style.transform = `translate(0px, 0px) scale(1)`; // Restablecer transformaciones
+        zoomSlider.value = 1; // Sincronizar el slider
     });
 
     // === MOVIMIENTO Y ZOOM EN CELULAR ===
+
+    let isDragging = false; // Controlar si se está arrastrando
+    let startX = 0, startY = 0; // Coordenadas iniciales al empezar el movimiento
+    let initialDistance = null; // Para gestos táctiles de zoom
 
     // Detectar inicio del movimiento táctil
     mapContainer.addEventListener('touchstart', (e) => {
@@ -302,24 +292,8 @@
         isDragging = false;
         initialDistance = null;
     });
-
-    // === ZOOM DESDE LA BARRA DESLIZADORA ===
-
-    zoomSlider.addEventListener('input', (e) => {
-        scale = parseFloat(e.target.value); // Obtener el valor del slider
-        map.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`; // Aplicar el zoom
-    });
-
-    // === RESET DEL MAPA ===
-
-    resetBtn.addEventListener('click', () => {
-        scale = 1; // Restablecer el zoom
-        offsetX = 0; // Restablecer el desplazamiento en X
-        offsetY = 0; // Restablecer el desplazamiento en Y
-        map.style.transform = `translate(0px, 0px) scale(1)`; // Restablecer transformaciones
-        zoomSlider.value = 1; // Sincronizar el slider
-    });
 </script>
+
 
 </body>
 </html>
