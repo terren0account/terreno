@@ -319,7 +319,20 @@
         map.style.transform = `translate(0px, 0px) scale(1)`; // Restablecer transformaciones
         zoomSlider.value = 1; // Sincronizar el slider
     });
+
+    // === AJUSTES PARA CELULAR ===
+
+    // Establecer un estilo absoluto para el panel de control en dispositivos móviles
+    if (window.innerWidth <= 768) {
+        const controlPanel = document.querySelector('.control-panel');
+        controlPanel.style.position = 'absolute';
+        controlPanel.style.top = '20px';
+        controlPanel.style.right = '10px';
+        controlPanel.style.left = '10px';
+        controlPanel.style.zIndex = '10';
+    }
 </script>
+
 
 </body>
 </html>
